@@ -13,7 +13,7 @@ def extract_contact(text):
         contact_number = match.group()
     return contact_number
 
-def extract_email_from_resume(text):
+def extract_email(text):
     email = None
     pattern = r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b"
     match = re.search(pattern, text)
@@ -21,7 +21,7 @@ def extract_email_from_resume(text):
         email = match.group()
     return email
 
-def extract_skills(text, skills_list):
+def extract_skills(text, skills_list=skills_list):
     skills = []
     for skill in skills_list:
         pattern = r"\b{}\b".format(re.escape(skill))
@@ -30,6 +30,17 @@ def extract_skills(text, skills_list):
             skills.append(skill)
 
     return skills
+
+def extract_education(text, education_keywords=education_keywords):
+    education = []
+
+    for keyword in education_keywords:
+        pattern = r"(?i)\b{}\b".format(re.escape(keyword))
+        match = re.search(pattern, text)
+        if match:
+            education.append(match.group())
+
+    return education
 
 def extract_name(text):
     name = None
@@ -45,6 +56,6 @@ def extract_name(text):
 
     return name
 
-resume_path = "Resume2.pdf"
-text = extract_text(resume_path)
+# resume_path = "Resume2.pdf"
+# text = extract_text(resume_path)
 
