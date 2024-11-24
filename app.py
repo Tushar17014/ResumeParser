@@ -3,13 +3,20 @@ from pdfminer.high_level import extract_text
 from extract_info import extract_contact, extract_email, extract_name, extract_skills, extract_education
 from categorize import predict_category
 import os
+os.environ["HF_HOME"] = "D:/Projects/ResumeParser/cache"
+
+from transformers import pipeline
+
+qa_pipeline = pipeline("question-answering", model="bert-large-uncased-whole-word-masking-finetuned-squad")
 
 st.title("Resume Parser")
 st.write("Upload a resume to extract information.")
 
-
-
 uploaded_file = st.file_uploader("Choose a resume file", type=["pdf", "docx", "txt"])
+
+def answer_question(resume_text: str, question: str) -> str:
+    result = qa_pipeline(question=question, context=resume_text)
+    return result['answer']
 
 if uploaded_file is not None:
     file_path = f"./temp_{uploaded_file.name}"
@@ -55,3 +62,8 @@ if uploaded_file is not None:
             st.write("Not Found")
     else:
         st.write("No data extracted.")
+
+    question = st.text_input("Enter your question:")
+    if question:
+        answer = answer_question(resume, question)
+        st.write(f"**Answer:** {answer}")
